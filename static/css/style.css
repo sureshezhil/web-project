@@ -1,0 +1,83 @@
+
+body{
+	background: url(../img/5.jpg);
+	font-family: 'Open Sans', sans-serif;
+}
+
+/*--thank-you--*/
+.thank-you {
+	background: #fff;
+	min-height: 300px;
+	width: 30%;
+	margin: 9% auto 4% auto;
+	text-align: center;
+	position: relative;
+	box-shadow: inset 0px 0px 10px 0px #ABABAB,-1px 1px 17px 7px #0F0000;
+	-webkit-box-shadow: inset 0px 0px 10px 0px #ABABAB,-1px 1px 17px 7px #0F0000;
+	-moz-box-shadow: inset 0px 0px 10px 0px #ABABAB,-1px 1px 17px 7px #0F0000;
+	-o-box-shadow: inset 0px 0px 10px 0px #ABABAB,-1px 1px 17px 7px #0F0000;
+}
+.thank-you h3 {
+	background: #2980b9;
+	color: #fff;
+	padding: 0.91em 0;
+}
+.thank-you p {
+	color: #7C7777;
+	width: 82%;
+	margin: 0 auto;
+	padding: 1em 0 0em;
+}
+
+/*--/thank-you--*/
+@media (max-width:1440px){
+	
+	.thank-you p {
+		width: 85%;
+	}
+	
+}
+@media (max-width:1280px){
+	.thank-you {
+		width: 46%;
+	}
+}
+@media (max-width:1024px){
+
+	.thank-you {
+		width: 46%;
+	}
+}
+@media (max-width:768px){
+
+	.thank-you {
+		width: 60%;
+	}
+}
+@media (max-width:640px){
+
+	.thank-you {
+		width: 75%;
+	}
+}
+
+@media (max-width:320px){
+
+	.thank-you {
+		width: 90%;
+		min-height: 260px;
+	}
+	
+	input[type="submit"] {
+		font-size: 22px;
+	}
+	
+	.thank-you p {
+		width: 98%;
+		font-size: 13px;
+	}
+	.thank-you h5 {
+		margin: 0.5em 0 2.1em;
+	}
+
+}
