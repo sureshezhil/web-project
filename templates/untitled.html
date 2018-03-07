@@ -1,0 +1,28 @@
+<div class="row">
+  {% for req_frnd in frnd_req_details %}
+  <div class="col-md-7">
+     <form action="/confirm_request/{{req_frnd[2]}}" method="post" enctype="multipart/form-data"> 
+          <div class="box box-primary">
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="form-group">
+                <!-- {{req_frnd[8]}} -->
+                <div class="box-body no-padding">
+                  <ul class="users-list clearfix">
+                    <li>
+                      <img src="../static/img/uploads/activities/{{req_frnd[8]}}" alt="User Image">
+                      <a class="users-list-name" href="#">{{req_frnd[4]}}</a>
+                      <span class="users-list-date">Today</span>
+                    </li>
+               <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-envelope-o"></i> Comfirm Request</button>
+              </ul>
+
+              </div>
+            </div>
+          </div>
+        </div>
+    </form>
+  </div>
+        {% endfor %}
+</div>
+

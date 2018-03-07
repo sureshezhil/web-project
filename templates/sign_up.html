@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Sign Up</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+{% include 'core.html'%}
+
+</head>
+<style>
+
+</style>
+
+<body>
+{% if success == 0 %}
+<div class="thank-you">
+  <h3>Sign Up</h3>
+<label>Enter the UNIQUIE UserID and email Id</label><br><span style="color:red">{{data}}</span>
+<div class="login-box-body">
+
+    <form action="/validate_signup" method="post">
+
+      <div class="form-group has-feedback">
+
+      <div class="input-group">
+                  <div class="input-group-addon">
+                    <i class="fa fa-user"></i>
+                  </div>
+                  <input type="text" class="form-control" name="user_id"  placeholder="User ID..">
+                </div></div>
+            <div class="form-group has-feedback">
+
+      <div class="input-group">
+                  <div class="input-group-addon">
+                   <i class="glyphicon glyphicon-envelope "></i>
+                  </div>
+
+                  <input type="email" class="form-control" name="mail_id" placeholder="email ID ..">
+
+                </div></div>
+      
+<!-- /.col -->
+        <div class="col-xs-13">
+          <button type="submit" class="btn btn-primary btn-block btn-flat"><b>Next </b> <i class="fa  fa-chevron-right"></i></button>
+        </div>
+        <!-- /.col -->
+      </div>
+      </div>
+    </form>
+       
+
+  </div>
+
+</div>
+
+
+
+
+
+{% endif %}
+{% if success == 1  %}
+<!--thank you-->
+<div class="thank-you">
+  <h3>Sign Up Step 2</h3>
+<label>Enter all the requied details :</label>
+<div class="login-box-body">
+
+    <form action="/tem_signup" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="user_id" value="{{user_id}}">
+      <input type="hidden" name="mail_id" value="{{mail_id}}">
+      <div class="form-group has-feedback">
+
+      <div class="input-group">
+                  <div class="input-group-addon">
+                    <i class="fa fa-user"></i>
+                  </div>
+                  <input type="text" class="form-control" name="user_name" value="{{user_name}}" placeholder="Profile Name..">
+                </div></div>
+
+      <div class="form-group has-feedback">
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="date" class="form-control" value="{{dob}}" name="dob" placeholder="DOB..">
+                </div>
+
+              </div>
+      <div class="form-group has-feedback">
+
+      <div class="input-group">
+                  <div class="input-group-addon">
+                    <i class="fa fa-phone"></i>
+                  </div>
+                  <input type="text" class="form-control" value="{{phone}}" name="phone" placeholder="Mobile number..">
+                </div></div>
+      <div class="input-group">
+                  <div class="input-group-addon">
+                  </div>
+                  <input type="file" class="form-control" value="{{file}}" name="file" placeholder="choose the profile pic..">
+                </div>
+
+                <div class="form-group has-feedback">
+        <div class="input-group">
+                  <div class="input-group-addon">
+                   <i class="fa fa-venus-mars"></i>
+                  </div>
+                 <select class="form-control" name="gender" value="{{gender}}" placeholder="Select a gender" >
+                  <option>Select a gender...</option> 
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Others...</option>
+                </select>
+                </div></div>
+      <div class="form-group has-feedback">
+        <div class="input-group">
+                  <div class="input-group-addon">
+                   <i class="glyphicon glyphicon-lock "></i>
+                  </div>
+
+                 <input type="password" class="form-control" placeholder="Password" name="password">
+
+                </div></div>
+                
+      <div class="form-group has-feedback">
+        <div class="input-group">
+                  <div class="input-group-addon">
+                   <i class="glyphicon glyphicon-log-in "></i>
+                  </div>
+
+                 <input type="password" class="form-control" name="rep_pass" placeholder="Re-enter the Password">
+
+                </div></div>
+        <!-- /.col -->
+        <div class="col-xs-13">
+          <button type="submit" class="btn btn-primary btn-block btn-flat">Submit</button>
+        </div>
+        <!-- /.col -->
+      </div>
+  <a href="/">Already have an account</a><br><br>
+    </form>
+       
+
+  </div>
+
+</div>
+
+{% endif %}
+
+
+</body>
+</html>
