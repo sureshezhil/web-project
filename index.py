@@ -4,11 +4,13 @@ import datetime
 now = datetime.datetime.now()
 from flask import Flask,request,render_template,session,redirect
 from werkzeug import secure_filename
-from database import insert,select,update,delete
+from database import insert,select,update,delete,encrypt
 select=select()
 insert=insert()
 update=update()
 delete=delete()
+encrypt=encrypt()
+video_list=[".mp4",".ogg",".mkv",".avi"]
 album=""
 profile=""
 cover_pic=""
@@ -21,9 +23,12 @@ app.config['cover'] = "static/img/uploads/cover_picture"
 #testing
 
 @app.route("/test" , methods=['POST','GET'])
+# def test():
+# 	data=select.test(32)
+# 	return render_template("test.html",data=data)
 def test():
-	data=select.test(32)
-	return render_template("test.html",data=data)
+	data=encrypt.encrypt("suresh")
+	return data
 @app.route("/")
 def login():
 	return render_template("login.html")
@@ -36,9 +41,10 @@ def login_validate():
 	if user_id=="" or password=="":
 		return render_template("login.html",data="Please Enter the vaild User name or password")	
 	else:
+		password=encrypt.encrypt(password)
+		print password
 		data=select.login(user_id,password)
 		if (data):
-			print data[9]
 			session['id']=data[0]
 			session['user_id']=data[1]
 			session['user_name']=data[4]
@@ -84,12 +90,21 @@ def tem_signup():
 	password=request.form['password']
 	repeat_pass=request.form['rep_pass']
 	if(password== repeat_pass):
-		filename = secure_filename(files.filename)
-		filename1=filename
-		files.save(os.path.join(app.config['Dp'], filename))
-		now = datetime.datetime.now()
-		os.rename("static/img/uploads/Dp/"+str(filename),"static/img/uploads/Dp/"+"media_"+user_name+"_"+user_id+"_"+str(now)+filename1)
-		file="media_"+user_name+"_"+user_id+"_"+str(now)+filename1
+		password=encrypt.encrypt(password)
+		if (files):
+			filename = secure_filename(files.filename)
+			filename1=filename
+			files.save(os.path.join(app.config['Dp'], filename))
+			now = datetime.datetime.now()
+			os.rename("static/img/uploads/Dp/"+str(filename),"static/img/uploads/Dp/"+"media_"+user_id+"_"+str(now)+filename1)
+			file="media_"+user_id+"_"+str(now)+filename1
+		else:
+			if(gender=="Male"):
+				files=user_name[0].lower()
+				file="alphabets/"+files+".jpg"
+			else:
+				files=user_name[0].lower()
+				file="alphabets/"+files+"f.jpg"
 		insert.signups(user_id,mail_id,user_name,password,phone,dob,gender,file)
 		return redirect("/")
 	else:
@@ -105,6 +120,7 @@ def index():
 	user_id=session['user_id']
 	user_name=session['user_name']
 	profile=session['photo']
+	theme=select.theme(id)
 	user_profile=select.user_profile(id)
 	#friend_request
 	frnd_req_id=select.friend_request(id)
@@ -150,7 +166,7 @@ def index():
 	online_frnd=select.select_session(id)
 
 	activity=reversed(activities)
-	return render_template("index.html",my_profile=user_profile,frnd_req_count=frnd_req_count,activities=activity,frnd_req_details=frnd_req_details,profile_pic=profile_pic,sessions=online_frnd,likes=like_list,data=data)
+	return render_template("index.html",video_list=video_list,theme=theme,my_profile=user_profile,frnd_req_count=frnd_req_count,activities=activity,frnd_req_details=frnd_req_details,profile_pic=profile_pic,sessions=online_frnd,likes=like_list,data=data)
 
 @app.route("/edit" , methods=['POST','GET'])
 def edit():
@@ -164,14 +180,15 @@ def edit():
 	cover=request.files['cover_pic']
 	password=request.form['password']
 	data=select.select_pass(user_id);
+	password=encrypt.encrypt(password)
 	if(data[0]==password):
 		if(files):
 			filename = secure_filename(files.filename)
 			filename1=filename
 			files.save(os.path.join(app.config['Dp'], filename))
 			now = datetime.datetime.now()
-			os.rename("static/img/uploads/Dp/"+str(filename),"static/img/uploads/Dp/"+"media_"+user_name+"_"+str(user_id)+"_"+str(now)+filename1)
-			file="media_"+user_name+"_"+str(user_id)+"_"+str(now)+filename1
+			os.rename("static/img/uploads/Dp/"+str(filename),"static/img/uploads/Dp/"+"media_"+str(user_id)+"_"+str(now)+filename1)
+			file="media_"+str(user_id)+"_"+str(now)+filename1
 		else:
 			file=session['photo']
 		if(cover):
@@ -198,12 +215,34 @@ def likes(post_id):
 @app.route("/view_likes/<post_id>",methods=['POST','GET'])
 def veiw_likes(post_id):
 	data=select.select_likes(post_id)
+	post=select.select_post(post_id)
+	posted_user=select.select_post_user(post[1])
 	like_list=[]
 	for x in data:
 		like_list.append(select.select_profile_data(x[0]))
 
 	print like_list
-	return render_template("test.html",data=data,like=like_list)
+	return render_template("test.html",data=data,liked_profile=like_list,post=post,posted_user=posted_user,s=1)
+@app.route("/comment/<post_id>",methods=['POST','GET'])
+def comment(post_id):
+	user_id=session['id']
+	comment=request.form['comment']
+	update.update_comment(post_id,user_id)
+	insert.insert_comment(post_id,user_id,comment)
+	return redirect("/dashboard")
+
+@app.route("/view_comments/<post_id>",methods=['POST','GET'])
+def veiw_comments(post_id):
+	data=select.select_likes(post_id)
+	post=select.select_post(post_id)
+	posted_user=select.select_post_user(post[1])
+	like_list=[]
+	for x in data:
+		like_list.append(select.select_profile_data(x[0]))
+
+	print like_list
+	return render_template("test.html",data=data,liked_profile=like_list,post=post,posted_user=posted_user,s=0)
+
 
 @app.route("/profile_setting/<id>",methods=['POST','GET'])
 def settings(id):
@@ -272,6 +311,7 @@ def request_frnd(req_id):
 
 @app.route("/profile/<id>")
 def profile(id):
+	user_id=session['id']
 	user_profile=select.user_profile(id)
 	data=[]
 	data1=select.select_connections(id)
@@ -296,7 +336,7 @@ def profile(id):
 		for y in x:
 			activities.append(y)
 	activity=reversed(activities)
-	return render_template("profile.html",my_profile=user_profile,activities=activity,profile_pic=profile_pic)
+	return render_template("profile.html",user_id=user_id,my_profile=user_profile,activities=activity,profile_pic=profile_pic)
 
 
 
@@ -341,9 +381,11 @@ def login1():
 
 
 
-@app.route("/logout")
-def logout():
-	user_id=session['id']
+@app.route("/logout/<user_id>")
+def logout(user_id):
+	# theme=request.form['theme']
+	user_id=user_id
+	# update.update_theme(theme,user_id)
 	delete.pop_session(user_id)
 	session.pop('user_id',None)
 	session.pop('user_name',None)
@@ -351,4 +393,4 @@ def logout():
 	return redirect("/")
 
 if __name__=="__main__":
-	app.run("suresh",8000,debug=True)
+	app.run("192.168.137.2",debug=True)

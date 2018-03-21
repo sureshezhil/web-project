@@ -12,8 +12,11 @@ class insert:
   def upload_post(*data):
   	obj.execute("INSERT INTO m_post(`user_id`,`post_content`,`post_attachement`,`post_likes`) VALUES('%s','%s','%s','%s')" %(data[1],data[2],data[3],data[4]))
   	con.commit()
-  def request(*data):
+  def insert_comment(*data):
+  	obj.execute("INSERT INTO m_comments(`post_id`,`user_id`,`comment`) VALUES('%s','%s','%s')" %(data[1],data[2],data[3]))
+	con.commit()
 
+  def request(*data):
     obj.execute("INSERT INTO m_bp_friends (`initiator_user_id`, `friend_user_id`, `is_confirmed`) VALUES('%s','%s','%s')" %(data[1],data[2],0))
     con.commit()   
     return 1
@@ -28,7 +31,7 @@ class insert:
 	else:
 		obj.execute("INSERT INTO m_sessions(`user_id`, `user_name`, `profile_pic`,`time`) VALUES('%s','%s','%s','%s')" %(data[1],data[2],data[3],data[4]))
 		con.commit() 
-	
+
 
 class update:
 	def user_edit(*data):
@@ -55,6 +58,15 @@ class update:
 			con.commit()
 	def edit_profile(*data):
 		obj.execute("UPDATE m_users SET display_name='%s',user_email='%s',phone='%s',dob='%s',gender='%s',photo='%s',cover_pic='%s' WHERE ID='%s';" %(data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8]))
+		con.commit()
+	def update_comment(*data):
+		obj.execute("SELECT `post_comments` FROM m_post WHERE id='%s' ;" %(data[1]))
+		comment=obj.fetchone()
+		comment=comment[0]+1
+		obj.execute("UPDATE m_post SET post_likes='%s' WHERE id='%s';" %(comment,data[1]))
+		con.commit()
+	def update_theme(*data):
+		obj.execute("UPDATE m_users SET theme='%s' WHERE id='%s';" %(data[1],data[2]))
 		con.commit()
 
 class delete:
@@ -147,10 +159,33 @@ class select:
 		obj.execute("SELECT `user_pass` FROM m_users WHERE  ID='%s' " %(data[1]))
 		data=obj.fetchone()
 		return data
+	def select_post(*data):
+		obj.execute("SELECT * FROM m_post WHERE  id='%s' " %(data[1]))
+		data=obj.fetchone()
+		return data
+	def select_post_user(*data):
+		obj.execute("SELECT * FROM m_users WHERE  ID='%s' " %(data[1]))
+		data=obj.fetchone()
+		return data
+	def theme(*data):
+		obj.execute("SELECT `theme` FROM m_users WHERE  ID='%s' " %(data[1]))
+		data=obj.fetchone()
+		return data		
 
+
+class encrypt:
+	def encrypt(*data):
+		text=data[1]
+		ch=""
+		for i in text:
+			no=ord(i)+10
+			ch=ch+chr(no)
+		return ch
+		
 
 if __name__=="__main__":
 	update=update()
 	select=select()
 	insert=insert()
 	delete=delete()
+	encrypt=encrypt()
