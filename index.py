@@ -5,12 +5,14 @@ now = datetime.datetime.now()
 from flask import Flask,request,render_template,session,redirect
 from werkzeug import secure_filename
 from database import insert,select,update,delete,encrypt
+con=MySQLdb.connect("localhost","root","root","media")
+obj=con.cursor()
 select=select()
 insert=insert()
 update=update()
 delete=delete()
 encrypt=encrypt()
-video_list=[".mp4",".ogg",".mkv",".avi"]
+video_list=[".mp4",".ogg",".mkv",".avi",".swf"]
 album=""
 profile=""
 cover_pic=""
@@ -215,33 +217,60 @@ def likes(post_id):
 @app.route("/view_likes/<post_id>",methods=['POST','GET'])
 def veiw_likes(post_id):
 	data=select.select_likes(post_id)
+	# print data
 	post=select.select_post(post_id)
 	posted_user=select.select_post_user(post[1])
 	like_list=[]
 	for x in data:
 		like_list.append(select.select_profile_data(x[0]))
-
 	print like_list
-	return render_template("test.html",data=data,liked_profile=like_list,post=post,posted_user=posted_user,s=1)
-@app.route("/comment/<post_id>",methods=['POST','GET'])
+	data_list=[]
+	for x in data:
+		for y in like_list:
+			if(y[0]==x[0]):
+				a=(y[0],y[1],y[2],x[1])
+				data_list.append(a)
+				break;
+	return render_template("like_comment.html",liked_list=data_list,post=post,posted_user=posted_user,s=1)
+@app.route("/post_comment/<post_id>",methods=['POST','GET'])
 def comment(post_id):
 	user_id=session['id']
 	comment=request.form['comment']
-	update.update_comment(post_id,user_id)
-	insert.insert_comment(post_id,user_id,comment)
+	files=request.files['attachment']
+	if(comment or files):
+		if(files):
+				filename = secure_filename(files.filename)
+				filename1=filename
+				files.save(os.path.join(app.config['activity'], filename))
+				now = datetime.datetime.now()
+				os.rename("static/img/uploads/activities/"+str(filename),"static/img/uploads/activities/"+str(user_id)+"comment"+"_"+"media_"+str(now)+filename1)
+				file=str(user_id)+"comment"+"_"+"media_"+str(now)+filename1
+		else:
+			file=0
+		update.update_comment(post_id,user_id)
+		insert.insert_comment(post_id,user_id,comment,file)
 	return redirect("/dashboard")
 
 @app.route("/view_comments/<post_id>",methods=['POST','GET'])
 def veiw_comments(post_id):
-	data=select.select_likes(post_id)
+	data=select.select_comments(post_id)
 	post=select.select_post(post_id)
+	# print post
 	posted_user=select.select_post_user(post[1])
-	like_list=[]
+	# print posted_user
+	comment_list=[]
 	for x in data:
-		like_list.append(select.select_profile_data(x[0]))
-
-	print like_list
-	return render_template("test.html",data=data,liked_profile=like_list,post=post,posted_user=posted_user,s=0)
+		comment_list.append(select.select_profile_data(x[0]))
+	data_list=[]
+	for x in data:
+		for y in comment_list:
+			if(y[0]==x[0]):
+				time=str(x[4])
+				t="\t"+time[10:16]+ " " +time[0:10]
+				a=(y[0],y[1],y[2],x[2],x[3],t)
+				data_list.append(a)
+				break;
+	return render_template("like_comment.html",data=data,commented_list=data_list,post=post,posted_user=posted_user,s=0)
 
 
 @app.route("/profile_setting/<id>",methods=['POST','GET'])
@@ -249,7 +278,14 @@ def settings(id):
 	return  "sss"
 @app.route("/delete_post/<id>",methods=['POST','GET'])
 def delete_post(id):
+	obj.execute("SELECT `post_attachement` FROM m_post WHERE id='%s'" %(id))
+	data=obj.fetchone()
+	for x in data:
+		data=x
+	if(data!=str(0)):
+		os.remove("static/img/uploads/activities/"+data)
 	delete.delete_post(id)
+
 	return  redirect("/dashboard")
 
 
@@ -287,6 +323,21 @@ def upload():
 			insert.upload_post(id,content,file,0)
 	return redirect("/dashboard")
 
+@app.route("/create_group/<id>",methods=['POST','GET'])
+def create_group(id):
+
+
+	return render_template("create_group.html")
+
+
+
+
+@app.route("/theme",methods=['POST','GET'])
+def theme():
+	theme=request.form['theme']
+	user_id=session['id']
+	update.update_theme(theme,user_id)
+	return redirect("/dashboard")
 
 
 @app.route("/search",methods=['POST','GET'])
@@ -294,12 +345,25 @@ def search():
 	q=request.form['q']
 
 	user_id=session['user_id']
+	id=session['id']
 	user_name=session['user_name']
 	profile=session['photo']
-	q=q[1:]
-	result=select.search(q)
+	if('@' in q):
+		q=q[1:]
+		result=select.search(q)
+	# else:
+	# 	result=select.search_frnd(q)
+	# 	print result
+	data=select.select_con(id,result[0])
+	obj.execute("SELECT * FROM m_bp_friends WHERE  friend_user_id='%s' AND initiator_user_id='%s' " %(id,result[0]))
+	data1=obj.fetchone()
+	print data,data1
+	if(data==None and data1==None ):
+		s=1
+	else:
+		s=0
+	return render_template("friends.html",result=result,user_id=id,user_name=user_name,profile=profile,s=s)
 
-	return render_template("friends.html",result=result,user_id=user_id,user_name=user_name,profile=profile)
 
 @app.route("/request/<req_id>")
 def request_frnd(req_id):
@@ -312,6 +376,8 @@ def request_frnd(req_id):
 @app.route("/profile/<id>")
 def profile(id):
 	user_id=session['id']
+	theme=select.theme(user_id)
+	my_profile_data=select.user_profile(user_id)
 	user_profile=select.user_profile(id)
 	data=[]
 	data1=select.select_connections(id)
@@ -336,7 +402,7 @@ def profile(id):
 		for y in x:
 			activities.append(y)
 	activity=reversed(activities)
-	return render_template("profile.html",user_id=user_id,my_profile=user_profile,activities=activity,profile_pic=profile_pic)
+	return render_template("profile.html",theme=theme,my_profile_data=my_profile_data,user_id=user_id,my_profile=user_profile,activities=activity,profile_pic=profile_pic)
 
 
 
@@ -393,4 +459,4 @@ def logout(user_id):
 	return redirect("/")
 
 if __name__=="__main__":
-	app.run("192.168.137.2",debug=True)
+	app.run("127.0.0.1",8000,debug=True)

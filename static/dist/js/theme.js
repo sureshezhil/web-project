@@ -88,6 +88,7 @@ $(function () {
    * @param String cls the new skin class
    * @returns Boolean false to prevent link's default action
    */
+
   function changeSkin(cls) {
     $.each(mySkins, function (i) {
       $('body').removeClass(mySkins[i])
@@ -140,7 +141,6 @@ $(function () {
         $sidebar.addClass('control-sidebar-dark')
       }
     })
-
     $('[data-enable="expandOnHover"]').on('click', function () {
       $(this).attr('disabled', true)
       $pushMenu.expandOnHover()

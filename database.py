@@ -13,7 +13,7 @@ class insert:
   	obj.execute("INSERT INTO m_post(`user_id`,`post_content`,`post_attachement`,`post_likes`) VALUES('%s','%s','%s','%s')" %(data[1],data[2],data[3],data[4]))
   	con.commit()
   def insert_comment(*data):
-  	obj.execute("INSERT INTO m_comments(`post_id`,`user_id`,`comment`) VALUES('%s','%s','%s')" %(data[1],data[2],data[3]))
+  	obj.execute("INSERT INTO m_comments(`post_id`,`user_id`,`comment`,`comment_attachement`) VALUES('%s','%s','%s','%s')" %(data[1],data[2],data[3],data[4]))
 	con.commit()
 
   def request(*data):
@@ -60,10 +60,10 @@ class update:
 		obj.execute("UPDATE m_users SET display_name='%s',user_email='%s',phone='%s',dob='%s',gender='%s',photo='%s',cover_pic='%s' WHERE ID='%s';" %(data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8]))
 		con.commit()
 	def update_comment(*data):
-		obj.execute("SELECT `post_comments` FROM m_post WHERE id='%s' ;" %(data[1]))
+		obj.execute("SELECT `post_comments_count` FROM m_post WHERE id='%s' ;" %(data[1]))
 		comment=obj.fetchone()
 		comment=comment[0]+1
-		obj.execute("UPDATE m_post SET post_likes='%s' WHERE id='%s';" %(comment,data[1]))
+		obj.execute("UPDATE m_post SET post_comments_count='%s' WHERE id='%s';" %(comment,data[1]))
 		con.commit()
 	def update_theme(*data):
 		obj.execute("UPDATE m_users SET theme='%s' WHERE id='%s';" %(data[1],data[2]))
@@ -86,7 +86,12 @@ class delete:
 
 	def delete_post(*data):
 		obj.execute("DELETE FROM m_post WHERE id='%s'" %(data[1]))
-		con.commit()	
+		con.commit()
+		obj.execute("DELETE FROM m_likes WHERE post_id='%s'" %(data[1]))
+		con.commit()
+		obj.execute("DELETE FROM m_comments WHERE post_id='%s'" %(data[1]))
+		con.commit()
+
 	
 
 class select:
@@ -148,7 +153,12 @@ class select:
 	def select_likes(*data):
 		obj.execute("SELECT `user_id`,`count`,`post_id` FROM m_likes WHERE post_id='%s'" %(data[1]))
 		data=obj.fetchall()
-		return data			
+		return data	
+	def select_comments(*data):
+		obj.execute("SELECT `user_id`,`post_id`,`comment`,`comment_attachement`,`time` FROM m_comments WHERE  post_id='%s' " %(data[1]))
+		data=obj.fetchall()
+		return data	
+
 	def test(*data):
 		obj.execute("SELECT m_likes.user_id,m_users.ID,m_users.display_name,m_users.photo,m_post.post_attachement,m_likes.count ,m_post.time FROM m_likes,m_post ,m_users WHERE m_likes.user_id =m_post.user_id ")
 		# obj.execute("SELECT `ID` FROM m_users WHERE ID='%s'" %(data[1]))
@@ -167,8 +177,16 @@ class select:
 		obj.execute("SELECT * FROM m_users WHERE  ID='%s' " %(data[1]))
 		data=obj.fetchone()
 		return data
+	def select_con(*data):
+		obj.execute("SELECT * FROM m_bp_friends WHERE  initiator_user_id='%s' AND friend_user_id='%s' " %(data[1],data[2]))
+		data=obj.fetchone()
+		return data
+	def search_frnd(*data):
+		obj.execute("SELECT * FROM m_users WHERE display_name LIKE '%s'% " %(data[1]))
+		data=obj.fetchall()
+		return data		
 	def theme(*data):
-		obj.execute("SELECT `theme` FROM m_users WHERE  ID='%s' " %(data[1]))
+		obj.execute("SELECT theme FROM m_users WHERE  ID='%s' " %(data[1]))
 		data=obj.fetchone()
 		return data		
 

@@ -160,7 +160,7 @@
                   <a href="/lockscreen" class="btn btn-default btn-flat">Lock</a>
                 </div>
                 <div class="pull-right">
-                  <a href="/logout" class="btn btn-default btn-flat">Sign out</a>
+                  <a href="/logout/{{user_id}}" class="btn btn-default btn-flat">Sign out</a>
                 </div>
               </li>
             </ul>
@@ -215,11 +215,7 @@
 
       <div class="row">
 
-        <div class="col-md-8">
-
-
-
-{{result}}
+        <div class="col-md-10">
 <div class="box box-primary">
             <div class="box-header">
               <i class="fa fa-user-plus"></i>
@@ -229,21 +225,68 @@
             <!-- /.box-header -->
             <div class="box-body">
               <!-- See dist/js/pages/dashboard.js to activate the todoList plugin -->
-              <ul class="todo-list">
-                <li>
-        <div class="image">
-  <img src="../static/img/uploads/Dp/{{result[8]}}" class="img-circle" width="70" alt="User Image">   @{{result[1]}} <br>{{result[4]}} <br>{{result[0]}}
-         {% if result[1]!=user_id %}
+                  {% if result %}
+          <div class="col-md-12">
+            
+              <!-- {{result}} -->
+          <!-- Widget: user widget style 1 -->
+          <div class="box box-widget widget-user">
+            <!-- Add the bg color to the header using any of the bg-* classes -->
 
-    <a href="/request/{{result[0]}}" <button type="submit" class="btn btn-primary pull-right">send request</button></a><br>{% endif%}
-  DOB:{{result[6]}} 
+            <div class="widget-user-header bg-black" style="background: url('../static/img/uploads/cover_picture/{{result[9]}}') center center;">
+            </div>
+            <a  href="/confirm/{{result[0]}}">
+            <div class="widget-user-image">
+              <img class="img-circle" src="../static/img/uploads/Dp/{{result[8]}}" alt="{{result[8]}}">
+            </div>
+            </a>
+            <div class="box-footer">
+              <div class="row">
+                <div class="col-sm-4 border-right">
+                  <div class="description-block">
+                <span class="description-text">follow him</span>
+                    <h5 class="description-header">@{{result[1]}}</h5>
+                    
+                  </div>
+                  <!-- /.description-block -->
+                </div>
+                <!-- /.col -->
+                <div class="col-sm-4 border-right">
+                  <div class="description-block">
+                    <h5 class="description-header">{{result[4]}}</h5>
+                    <span class="description-text">NAme</span>
+                  </div>
+                  <!-- /.description-block -->
+                </div>
+                <!-- /.col -->
+                <div class="col-sm-4">
+                  <div class="description-block">
+                    <h5 class="description-header">{{result[6]}}</h5>
+                    <span class="description-text">D.O.B</span>
 
+                  </div>
+                  <!-- /.description-block -->
+<!-- {{result}} -->
+                </div>
+              </div>
+              <!-- /.row -->
+            </div>
+
+          </div>
+          <!-- /.widget-user -->
+
+        <!-- </form> -->
         </div>
+        {% if s %}
+    <a href="/request/{{result[0]}}"> <button type="submit" class="btn btn-primary pull-right">send request</button></a><br>
+    {% else %}
+    <b> already friends</b>
+    {% endif%}
 
-
-                </li>
-                
-              </ul>
+    {% endif%}
+{%if not result %}
+no such a user 
+{% endif %}
             </div>
             <!-- /.box-body -->
 

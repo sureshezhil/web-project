@@ -18,12 +18,12 @@
 
 
 </head>
-<body class="hold-transition skin-blue fixed sidebar-mini">
+<body class="hold-transition {{theme[0]}} fixed sidebar-mini">
 <div class="wrapper">
 
   <header class="main-header">
     <!-- Logo -->
-    <a href="index2.html" class="logo">
+    <a href="/dashboard" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>SE</b>z</span>
       <!-- logo for regular state and mobile devices -->
@@ -202,16 +202,16 @@
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="../static/img/uploads/Dp/{{my_profile[8]}}" class="user-image" alt="User Image">
-              <span class="hidden-xs">{{my_profile[4]}}</span>
+              <img src="../static/img/uploads/Dp/{{my_profile_data[8]}}" class="user-image" alt="User Image">
+              <span class="hidden-xs">{{my_profile_data[4]}}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="../static/img/uploads/Dp/{{my_profile[8]}}" class="img-circle" alt="User Image">
+                <img src="../static/img/uploads/Dp/{{my_profile_data[8]}}" class="img-circle" alt="User Image">
 
                 <p>
-                  {{my_profile[4]}}
+                  {{my_profile_data[4]}}
                   <small>Member since Nov. 2012</small>
                 </p>
               </li>
@@ -236,7 +236,7 @@
                   <a href="/lockscreen" class="btn btn-default btn-flat">Lock</a>
                 </div>
                 <div class="pull-right">
-                  <a href="/logout" class="btn btn-default btn-flat">Sign out</a>
+                  <a href="/logout/{{my_profile_data[0]}}" class="btn btn-default btn-flat">Sign out</a>
                 </div>
               </li>
             </ul>
@@ -256,10 +256,10 @@
       <!-- Sidebar user panel -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="../static/img/uploads/Dp/{{my_profile[8]}}" class="img-circle" alt="User Image">
+          <img src="../static/img/uploads/Dp/{{my_profile_data[8]}}" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
-          <p>{{my_profile[4]}}</p>
+          <p>{{my_profile_data[4]}}</p>
           <a href="#"><i class="fa fa-circle text-success"></i>Online </a>
         </div>
       </div>
@@ -285,17 +285,7 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <h1>
-        User Profile
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Examples</a></li>
-        <li class="active">User profile</li>
-      </ol>
-    </section>
-
+    
     <!-- Main content -->
     <section class="content">
 
@@ -304,10 +294,10 @@
           <!-- Widget: user widget style 1 -->
           <div class="box box-widget widget-user">
             <!-- Add the bg color to the header using any of the bg-* classes -->
-            <div class="widget-user-header bg-black" style="background: url('../static/img/uploads/cover_picture/{{my_profile[9]}}' ) center center;">
-              <h3 class="widget-user-username">{{my_profile[4]}}</h3>
+            <div class="widget-user-header bg-black" style="background: url('../static/img/uploads/cover_picture/{{my_profile[9]}}' ) center center ;">
+              <b> <h2 class="widget-user-username" style="color:grey;">{{my_profile[4]}}</h2>
 
-              <h5 class="widget-user-desc">@{{my_profile[1]}}</h5>
+             <h5 class="widget-user-desc" style="color:grey;">@{{my_profile[1]}}</h5></b>
             </div>
             <div class="widget-user-image">
               <img class="img-circle" src="../static/img/uploads/Dp/{{my_profile[8]}}" alt="User profile picture">
