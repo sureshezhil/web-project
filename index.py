@@ -5,8 +5,6 @@ now = datetime.datetime.now()
 from flask import Flask,request,render_template,session,redirect
 from werkzeug import secure_filename
 from database import insert,select,update,delete,encrypt
-con=MySQLdb.connect("localhost","root","root","media")
-obj=con.cursor()
 select=select()
 insert=insert()
 update=update()
